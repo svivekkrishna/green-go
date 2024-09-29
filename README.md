@@ -28,3 +28,8 @@ The project is a straightforward GoLang project. In the pursuit of supporting bo
 library which could be then used to build a web interface, the main logic is abstracted into `lib`
 and the CLI aspects in `cli`. A `makefile` has been made available to support with the commonly
 used commands during development.
+
+## Disclaimer
+
+This project is my Dojo to learn GoLang. There will be lots of experimentation to help me on that
+journey.
