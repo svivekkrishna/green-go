@@ -46,6 +46,7 @@ func (e Endpoint) Check(health chan bool) {
 			if err != nil {
 				log.Println("Error getting " + e.Endpoint)
 				health <- false
+				return
 			}
 			health <- resp.StatusCode == e.Status
 		}
@@ -55,12 +56,14 @@ func (e Endpoint) Check(health chan bool) {
 			if err != nil {
 				log.Println("Error getting " + e.Endpoint)
 				health <- false
+				return
 			}
 			health <- resp.StatusCode == e.Status
 		}
 	case "ping":
 		log.Println("Ping is not implemented yet.")
 		health <- false
+		return
 	}
 	health <- false
 }
