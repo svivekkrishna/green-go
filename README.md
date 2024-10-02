@@ -10,10 +10,9 @@ be executed with one additional command line argument to provide the list of end
 wish to monitor. The structure of the yaml is pretty straightforward.
 
 ```yaml
-- endpoint: blog.svivekkrishna.cc
+- endpoint: https://blog.svivekkrishna.cc
   status: 200
-  protocol: https   
-  port: 443 
+  protocol: https # Supports https, http, ping currently
 ```
 
 The command line can be invoked with
