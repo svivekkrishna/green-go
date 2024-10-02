@@ -1,9 +1,9 @@
 package lib
 
 import (
-	"fmt"
 	"log"
 	"net/http"
+	"os/exec"
 )
 
 type Endpoint struct {
@@ -37,33 +37,35 @@ func PerformChecks(endpoints []Endpoint) []HealthCheckResult {
 	return results
 }
 
+func checkHttp(e Endpoint, health chan bool) {
+	resp, err := http.Get(e.Endpoint)
+	if err != nil {
+		log.Println("Error getting " + e.Endpoint)
+		health <- false
+		return
+	}
+	_ = resp.Body.Close()
+	health <- resp.StatusCode == e.Status
+}
+
+func checkPing(e Endpoint, health chan bool) {
+	cmd := exec.Command("ping", "-c", "1", "-W", "2", e.Endpoint)
+	health <- cmd.Run() == nil
+}
+
 func (e Endpoint) Check(health chan bool) {
 
 	switch e.Protocol {
 	case "http":
 		{
-			resp, err := http.Get("http://" + e.Endpoint + ":" + fmt.Sprint(e.Port))
-			if err != nil {
-				log.Println("Error getting " + e.Endpoint)
-				health <- false
-				return
-			}
-			health <- resp.StatusCode == e.Status
+			checkHttp(e, health)
 		}
 	case "https":
 		{
-			resp, err := http.Get("https://" + e.Endpoint + ":" + fmt.Sprint(e.Port))
-			if err != nil {
-				log.Println("Error getting " + e.Endpoint)
-				health <- false
-				return
-			}
-			health <- resp.StatusCode == e.Status
+			checkHttp(e, health)
 		}
 	case "ping":
-		log.Println("Ping is not implemented yet.")
-		health <- false
-		return
+		checkPing(e, health)
 	}
 	health <- false
 }

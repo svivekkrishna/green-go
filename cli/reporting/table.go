@@ -11,7 +11,7 @@ func RenderTable(results []lib.HealthCheckResult) {
 	t := table.NewWriter()
 	t.SetOutputMirror(os.Stdout)
 
-	t.AppendHeader(table.Row{"Status", "Endpoint", "Protocol", "Port"})
+	t.AppendHeader(table.Row{"Status", "Endpoint", "Protocol"})
 	for _, result := range results {
 		var healthSymbol string
 		if result.Health {
@@ -19,7 +19,7 @@ func RenderTable(results []lib.HealthCheckResult) {
 		} else {
 			healthSymbol = "❌"
 		}
-		t.AppendRow([]interface{}{healthSymbol, result.Endpoint.Endpoint, result.Endpoint.Protocol, result.Endpoint.Port})
+		t.AppendRow([]interface{}{healthSymbol, result.Endpoint.Endpoint, result.Endpoint.Protocol})
 	}
 
 	t.Render()
