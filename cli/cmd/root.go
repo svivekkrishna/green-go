@@ -28,6 +28,8 @@ var rootCmd = &cobra.Command{
 			fmt.Println("Add logic to read from a default path on PWD if exists.")
 		}
 
+		outputReporter := reporting.GetByType(cmd.Flag("format").Value.String())
+
 		content, err := ioutil.ReadFile(yamlPath)
 		if err != nil {
 			log.Fatal("Error occured while parsing YAML ", err.Error())
@@ -42,7 +44,8 @@ var rootCmd = &cobra.Command{
 			log.Fatal("Failed to parse file ", err)
 		}
 
-		reporting.RenderTable(lib.PerformChecks(endpoints))
+		outputReporter.Render(lib.PerformChecks(endpoints))
+
 	},
 }
 
@@ -65,5 +68,6 @@ func init() {
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
-	rootCmd.Flags().StringP("hosts-from-file", "f", "", "File to read the hosts info.	")
+	rootCmd.Flags().StringP("hosts-from-file", "f", "", "File to read the hosts info.")
+	rootCmd.Flags().StringP("format", "o", "table", "Output format.")
 }

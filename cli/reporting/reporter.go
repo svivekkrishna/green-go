@@ -7,7 +7,15 @@ import (
 	"github.com/jedib0t/go-pretty/v6/table"
 )
 
-func RenderTable(results []lib.HealthCheckResult) {
+type Reporter interface {
+	Render(results []lib.HealthCheckResult)
+}
+
+type Table struct {
+}
+
+func (reporter *Table) Render(results []lib.HealthCheckResult) {
+
 	t := table.NewWriter()
 	t.SetOutputMirror(os.Stdout)
 
@@ -23,4 +31,12 @@ func RenderTable(results []lib.HealthCheckResult) {
 	}
 
 	t.Render()
+}
+
+func GetByType(reporterType string) Reporter {
+	if reporterType == "table" {
+		return &Table{}
+	}
+
+	return nil
 }
