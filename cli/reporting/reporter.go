@@ -1,7 +1,10 @@
 package reporting
 
 import (
+	"encoding/json"
+	"fmt"
 	"green-go/lib"
+	"log"
 	"os"
 
 	"github.com/jedib0t/go-pretty/v6/table"
@@ -12,6 +15,9 @@ type Reporter interface {
 }
 
 type Table struct {
+}
+
+type Json struct {
 }
 
 func (reporter *Table) Render(results []lib.HealthCheckResult) {
@@ -33,9 +39,41 @@ func (reporter *Table) Render(results []lib.HealthCheckResult) {
 	t.Render()
 }
 
+type HealthCheckResultJson struct {
+	Status   bool   `json:"status"`
+	Endpoint string `json:"endpoint"`
+	Protocol string `json:"string"`
+}
+
+func (reporter *Json) Render(results []lib.HealthCheckResult) {
+	datas := make([]HealthCheckResultJson, len(results))
+	for i, result := range results {
+		datas[i] = HealthCheckResultJson{
+			Status:   result.Health,
+			Endpoint: result.Endpoint.Endpoint,
+			Protocol: result.Endpoint.Protocol,
+		}
+	}
+
+	jsonByte, err := json.Marshal(datas)
+	if err != nil {
+		log.Fatal(err)
+	}
+	jsonString := string(jsonByte)
+
+	fmt.Println(jsonString)
+}
+
 func GetByType(reporterType string) Reporter {
-	if reporterType == "table" {
-		return &Table{}
+	switch reporterType {
+	case "table":
+		{
+			return &Table{}
+		}
+	case "json":
+		{
+			return &Json{}
+		}
 	}
 
 	return nil
